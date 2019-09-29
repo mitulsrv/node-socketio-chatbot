@@ -1,0 +1,58 @@
+<html>
+    <head>
+            <title>Shree Tours</title>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <style>
+                body{
+                    margin-top: 100px;
+                    margin-left: 100px;
+                    margin-right: 100px;
+                }
+
+
+            </style>
+    </head>
+    
+        <body>
+            <div class="row">
+                <div id="chat" class="chat"></div>
+
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label>Enter Message</label>
+                        <textarea id="messageValue" class="form-control"></textarea>
+
+                        <br>
+                        <input type="submit" value="Send" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </body>
+        <script>
+            $(document).ready(function(){
+                var $message = $('#messageValue');
+                var $msgForm = $('#messageForm');
+                var $chat = $('#chat');
+
+                var socket = io.connect();
+
+                // socket.emit('get Welcome', $chat.append('<div class="well"><strong>Shree : </strong>' + data.msg + '</div>'));
+
+                $msgForm.submit(function(event){
+                        event.preventDefault();
+                    if($('#messageValue') != ""){
+                        socket.emit('send messages', $message.val());
+                        $('#messageValue').val('');
+                    }else{
+                        alert('Message is non empty');
+                    }
+                });
+
+                socket.on('new messages', function(data){
+                    $chat.append('<div class="well"><strong>'+data.username+'</strong> :  ' + data.msg + '</div>');
+                });
+            });
+        </script>
+</html>
